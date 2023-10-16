@@ -16,7 +16,8 @@ void init_option(py::module & m) {
     .def_readwrite("max_file_opening_threads", &rocksdb::DBOptions::max_file_opening_threads)
     .def_readwrite("max_total_wal_size", &rocksdb::DBOptions::max_total_wal_size)
     .def_readwrite("statistics", &rocksdb::DBOptions::statistics)
-    .def_readwrite("use_fsync", &rocksdb::DBOptions::use_fsync);
+    .def_readwrite("use_fsync", &rocksdb::DBOptions::use_fsync)
+    .def_readwrite("create_missing_column_families", &rocksdb::DBOptions::create_missing_column_families);
 
   py::class_<rocksdb::AdvancedColumnFamilyOptions>(m, "AdvancedColumnFamilyOptions")
     .def(py::init<>())
@@ -29,7 +30,8 @@ void init_option(py::module & m) {
     .def("OptimizeLevelStyleCompaction", &rocksdb::ColumnFamilyOptions::OptimizeLevelStyleCompaction, py::arg("memtable_memory_budget")=512L * 1024L * 1024L, py::return_value_policy::reference_internal)
     .def_readwrite("write_buffer_size", &rocksdb::ColumnFamilyOptions::write_buffer_size)
     .def_readwrite("table_factory", &rocksdb::ColumnFamilyOptions::table_factory)
-    .def_readwrite("sync", &rocksdb::ColumnFamilyOptions::merge_operator);
+    .def_readwrite("sync", &rocksdb::ColumnFamilyOptions::merge_operator)
+    .def_readwrite("disable_auto_compactions", &rocksdb::ColumnFamilyOptions::disable_auto_compactions);
 
   py::class_<rocksdb::Options, rocksdb::DBOptions, rocksdb::ColumnFamilyOptions>(m, "Options")
     .def(py::init<>());

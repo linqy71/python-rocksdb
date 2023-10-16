@@ -21,6 +21,27 @@ PYBIND11_MAKE_OPAQUE(std::vector<ColumnFamilyDescriptor, std::allocator<ColumnFa
     // ColumnFamilyHandle* handle;
 // };
 
+py_Checkpoint::py_Checkpoint(): ckpt_ptr(nullptr) {
+
+}
+
+py_Checkpoint::~py_Checkpoint() {
+  if (ckpt_ptr != nullptr) {
+    delete ckpt_ptr;
+  }
+}
+
+Status py_Checkpoint::Create(py_DB& db) {
+  if (db.db_ptr == nullptr) {
+    throw std::invalid_argument("db is invalid");
+  }
+  return Checkpoint::Create(db.db_ptr, &ckpt_ptr);
+}
+
+Status py_Checkpoint::CreateCheckpoint(const std::string& checkpoint_dir,
+                                  uint64_t log_size_for_flush) {
+  return ckpt_ptr->CreateCheckpoint(checkpoint_dir, log_size_for_flush);
+}
 
 py_DB::py_DB(): db_ptr(nullptr) {
   
@@ -164,6 +185,7 @@ std::unique_ptr<IteratorWrapper> py_DB::NewIterator(const ReadOptions& options, 
 
 
 void init_db(py::module &);
+void init_checkpoint(py::module &);
 void init_option(py::module &);
 void init_slice(py::module &);
 void init_status(py::module &);
@@ -212,6 +234,7 @@ PYBIND11_MODULE(pyrocksdb, m) {
   )pbdoc";
 
   init_db(m);
+  init_checkpoint(m);
   init_option(m);
   init_slice(m);
   init_status(m);

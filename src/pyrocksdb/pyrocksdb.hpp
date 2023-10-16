@@ -15,6 +15,7 @@
 #include <rocksdb/utilities/transaction_db.h>
 #include <rocksdb/utilities/transaction.h>
 #include <rocksdb/utilities/write_batch_with_index.h>
+#include <rocksdb/utilities/checkpoint.h>
 // #include <db/dbformat.h>
 // #include <db/snapshot_impl.h>
 
@@ -157,4 +158,17 @@ class py_DB {
     const std::string default_column_familiy_name(); // maybe a typo? take a look pls
   private:
     DB* db_ptr;
+    friend class py_Checkpoint;
+};
+
+class py_Checkpoint {
+  public:
+    py_Checkpoint();
+    ~py_Checkpoint();
+    Status Create(py_DB& db);
+    Status CreateCheckpoint(const std::string& checkpoint_dir,
+                                  uint64_t log_size_for_flush);
+    
+  private:
+    Checkpoint* ckpt_ptr;
 };
